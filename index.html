@@ -1,0 +1,1725 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Leadership Impact Simulator - SCUC ISD</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.29.0/feather.min.js"></script>
+
+    <style>
+        :root {
+            --primary: #1a56db;
+            --primary-light: #dbeafe;
+            --success: #059669;
+            --success-light: #d1fae5;
+            --warning: #d97706;
+            --warning-light: #fef3c7;
+            --danger: #dc2626;
+            --danger-light: #fee2e2;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-400: #9ca3af;
+            --gray-500: #6b7280;
+            --gray-600: #4b5563;
+            --gray-700: #374151;
+            --gray-800: #1f2937;
+            --gray-900: #111827;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--gray-100);
+            color: var(--gray-800);
+            line-height: 1.5;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        header {
+            background-color: var(--primary);
+            color: white;
+            padding: 1rem 0;
+        }
+
+        header h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        header p {
+            color: var(--primary-light);
+            font-size: 0.9rem;
+        }
+
+        nav {
+            background-color: white;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+
+        nav button {
+            padding: 1rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--gray-600);
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            transition: all 0.2s;
+        }
+
+        nav button:hover {
+            color: var(--primary);
+        }
+
+        nav button.active {
+            color: var(--primary);
+            border-bottom: 2px solid var(--primary);
+        }
+
+        nav button svg {
+            margin-right: 0.5rem;
+        }
+
+        main {
+            padding: 1.5rem 0;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .card {
+            background-color: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(1, 1fr);
+            gap: 1rem;
+        }
+
+        @media (min-width: 768px) {
+            .stats-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+
+            .chart-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .stat-card {
+            background-color: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            padding: 1.25rem;
+        }
+
+        .stat-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .stat-card-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 3rem;
+            height: 3rem;
+            border-radius: 50%;
+        }
+
+        .stat-card-label {
+            font-size: 0.875rem;
+            color: var(--gray-500);
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-card-value {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .chart-container {
+            height: 300px;
+            margin-bottom: 1.5rem;
+        }
+
+        .chart-grid {
+            display: grid;
+            grid-template-columns: repeat(1, 1fr);
+            gap: 1rem;
+        }
+
+        .btn-group {
+            display: flex;
+            margin-bottom: 1rem;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            font-size: 0.875rem;
+            cursor: pointer;
+            background-color: var(--gray-200);
+            transition: all 0.2s;
+        }
+
+        .btn:first-child {
+            border-top-left-radius: 0.25rem;
+            border-bottom-left-radius: 0.25rem;
+        }
+
+        .btn:last-child {
+            border-top-right-radius: 0.25rem;
+            border-bottom-right-radius: 0.25rem;
+        }
+
+        .btn.active {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .savings-display {
+            display: flex;
+            justify-content: space-between;
+            background-color: var(--primary-light);
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .savings-display h3 {
+            font-size: 0.875rem;
+            color: var(--gray-700);
+            margin-bottom: 0.25rem;
+        }
+
+        .savings-display p.large {
+            font-size: 1.875rem;
+            font-weight: 700;
+        }
+
+        .time-saved {
+            color: var(--primary);
+        }
+
+        .money-saved {
+            color: var(--success);
+        }
+
+        .bot-card {
+            border: 1px solid var(--gray-200);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .bot-card:hover {
+            background-color: var(--primary-light);
+        }
+
+        .bot-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .bot-card h3 {
+            font-weight: 500;
+        }
+
+        .bot-time-saved {
+            background-color: var(--success-light);
+            color: var(--success);
+            font-size: 0.75rem;
+            font-weight: 500;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+        }
+
+        .bot-category {
+            font-size: 0.875rem;
+            color: var(--gray-600);
+        }
+
+        .resource-grid {
+            display: grid;
+            grid-template-columns: repeat(1, 1fr);
+            gap: 1rem;
+        }
+
+        @media (min-width: 768px) {
+            .resource-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .resource-grid-2 {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .resource-card {
+            border: 1px solid var(--gray-200);
+            border-radius: 0.5rem;
+            padding: 1rem;
+        }
+
+        .resource-card.blue {
+            background-color: var(--primary-light);
+        }
+
+        .resource-card.green {
+            background-color: var(--success-light);
+        }
+
+        .resource-card h3 {
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .resource-card p {
+            font-size: 0.875rem;
+            color: var(--gray-600);
+        }
+
+        .timeline {
+            position: relative;
+            padding-left: 3rem;
+        }
+
+        .timeline-line {
+            position: absolute;
+            left: 1.25rem;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background-color: var(--primary-light);
+        }
+
+        .timeline-item {
+            position: relative;
+            padding-bottom: 2rem;
+        }
+
+        .timeline-dot {
+            position: absolute;
+            left: -3rem;
+            top: 0.25rem;
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 50%;
+            background-color: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        .timeline-dot.success {
+            background-color: var(--success);
+        }
+
+        .timeline-title {
+            font-size: 1.25rem;
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+
+        .timeline-date {
+            color: var(--gray-600);
+            margin-bottom: 0.5rem;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+            border-radius: 0.25rem;
+            margin-right: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .badge-blue {
+            background-color: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .badge-purple {
+            background-color: #f3e8ff;
+            color: #7e22ce;
+        }
+
+        .footer {
+            background-color: var(--gray-100);
+            border-top: 1px solid var(--gray-200);
+            padding: 1rem 0;
+        }
+
+        .footer-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer p {
+            font-size: 0.875rem;
+            color: var(--gray-600);
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+            padding: 0.5rem 1.5rem;
+            border: none;
+            border-radius: 0.25rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-left: 0.5rem;
+        }
+
+        .btn-success {
+            background-color: var(--success);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #1e429f;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+
+        /* Bot Builder Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 100;
+            overflow-y: auto;
+        }
+
+        .modal.active {
+            display: block;
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 2rem auto;
+            max-width: 800px;
+            border-radius: 0.5rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 0.3s ease-out forwards;
+        }
+
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--gray-200);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--gray-500);
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .modal-footer {
+            padding: 1.5rem;
+            border-top: 1px solid var(--gray-200);
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .steps {
+            display: flex;
+            margin-bottom: 2rem;
+        }
+
+        .step {
+            flex: 1;
+            text-align: center;
+            position: relative;
+        }
+
+        .step:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            top: 1rem;
+            right: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--gray-200);
+            z-index: 1;
+        }
+
+        .step-number {
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            background-color: var(--gray-200);
+            color: var(--gray-600);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 0.5rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .step.active .step-number {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .step-title {
+            font-size: 0.875rem;
+            color: var(--gray-600);
+        }
+
+        .step.active .step-title {
+            color: var(--primary);
+            font-weight: 500;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--gray-300);
+            border-radius: 0.25rem;
+            font-size: 1rem;
+        }
+
+        .form-select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--gray-300);
+            border-radius: 0.25rem;
+            font-size: 1rem;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%236b7280'%3E%3Cpath fill-rule='evenodd' d='M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z' clip-rule='evenodd'/%3E%3C/svg%3E");
+            background-position: right 0.5rem center;
+            background-repeat: no-repeat;
+            background-size: 1.5em 1.5em;
+        }
+
+        .form-check {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-check-input {
+            margin-right: 0.5rem;
+        }
+
+        .step-content {
+            display: none;
+        }
+
+        .step-content.active {
+            display: block;
+        }
+
+        .preview-container {
+            background-color: var(--gray-100);
+            border: 1px solid var(--gray-300);
+            border-radius: 0.25rem;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+
+        .preview-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .preview-header h3 {
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        .preview-content {
+            border: 1px solid var(--gray-300);
+            border-radius: 0.25rem;
+            padding: 1rem;
+            background-color: white;
+            min-height: 200px;
+        }
+
+        .preview-footer {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 1rem;
+        }
+
+        /* Loading animation */
+        .loading {
+            display: inline-block;
+            width: 1.5rem;
+            height: 1.5rem;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Animated bot responses */
+        @keyframes typing {
+            from { width: 0 }
+            to { width: 100% }
+        }
+
+        .typing-animation {
+            overflow: hidden;
+            white-space: nowrap;
+            animation: typing 2s steps(40, end);
+        }
+
+        /* Toast notifications */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background-color: var(--success);
+            color: white;
+            padding: 1rem;
+            border-radius: 0.25rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transform: translateY(100%);
+            opacity: 0;
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+
+        .toast.active {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <h1>AI Leadership Impact Simulator</h1>
+            <p>SCUC Independent School District</p>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav>
+        <div class="container">
+            <ul>
+                <li>
+                    <button class="nav-btn active" data-tab="dashboard">
+                        <i data-feather="bar-chart-2"></i>
+                        Dashboard
+                    </button>
+                </li>
+                <li>
+                    <button class="nav-btn" data-tab="bots">
+                        <i data-feather="settings"></i>
+                        Bot Builder
+                    </button>
+                </li>
+                <li>
+                    <button class="nav-btn" data-tab="resources">
+                        <i data-feather="file-text"></i>
+                        Resources
+                    </button>
+                </li>
+                <li>
+                    <button class="nav-btn" data-tab="calendar">
+                        <i data-feather="calendar"></i>
+                        Training Plan
+                    </button>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+        <div class="container">
+            <!-- Dashboard Tab -->
+            <div id="dashboard" class="tab-content active animate-fade-in">
+                <!-- Stats Cards -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-card-header">
+                            <div>
+                                <div class="stat-card-label">Time Saved Per Leader</div>
+                                <div class="stat-card-value">3 hours/week</div>
+                            </div>
+                            <div class="stat-card-icon" style="background-color: var(--primary-light);">
+                                <i data-feather="clock" style="color: var(--primary);"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-card-header">
+                            <div>
+                                <div class="stat-card-label">District-wide Annual Savings</div>
+                                <div class="stat-card-value">$234,000</div>
+                            </div>
+                            <div class="stat-card-icon" style="background-color: var(--success-light);">
+                                <i data-feather="bar-chart-2" style="color: var(--success);"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-card-header">
+                            <div>
+                                <div class="stat-card-label">Bot Adoption Target</div>
+                                <div class="stat-card-value">≥60% in 30 days</div>
+                            </div>
+                            <div class="stat-card-icon" style="background-color: #f3e8ff;">
+                                <i data-feather="users" style="color: #7e22ce;"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-card-header">
+                            <div>
+                                <div class="stat-card-label">Satisfaction Target</div>
+                                <div class="stat-card-value">NPS ≥ +40</div>
+                            </div>
+                            <div class="stat-card-icon" style="background-color: var(--warning-light);">
+                                <i data-feather="message-circle" style="color: var(--warning);"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Time Savings Chart -->
+                <div class="card">
+                    <h2 class="card-title">Hours Spent on Administrative Tasks</h2>
+                    <div class="chart-container">
+                        <canvas id="timeChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Time Savings and Adoption -->
+                <div class="chart-grid">
+                    <!-- Time Savings Calculator -->
+                    <div class="card">
+                        <h2 class="card-title">Time Savings Calculator</h2>
+                        <div>
+                            <label class="form-label">View savings by:</label>
+                            <div class="btn-group">
+                                <button class="btn time-btn active" data-time="weekly">Weekly</button>
+                                <button class="btn time-btn" data-time="monthly">Monthly</button>
+                                <button class="btn time-btn" data-time="yearly">Yearly</button>
+                            </div>
+                        </div>
+
+                        <div class="savings-display">
+                            <div>
+                                <h3>Total time saved:</h3>
+                                <p class="large time-saved" id="timeSaved">45 hours/week</p>
+                            </div>
+                            <div>
+                                <h3>Monetary value:</h3>
+                                <p class="large money-saved" id="moneySaved">$2,250</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Adoption Chart -->
+                    <div class="card">
+                        <h2 class="card-title">Projected Adoption Timeline</h2>
+                        <div class="chart-container">
+                            <canvas id="adoptionChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bot Builder Tab -->
+            <div id="bots" class="tab-content">
+                <div class="card">
+                    <h2 class="card-title">AI Assistant Template Library</h2>
+                    <p style="margin-bottom: 1rem; color: var(--gray-600);">These pre-configured templates will be available after training. Click on a template to preview.</p>
+
+                    <!-- Teachers Section -->
+                    <div class="role-section" style="margin-bottom: 2rem;">
+                        <h3 style="color: var(--primary); font-size: 1.25rem; margin-bottom: 0.75rem; border-bottom: 2px solid var(--primary-light); padding-bottom: 0.5rem;">
+                            <i data-feather="book-open" style="width: 1.25rem; height: 1.25rem; vertical-align: middle; margin-right: 0.5rem;"></i>
+                            For Teachers: Paperwork-to-Pedagogy — Reclaim Your Teaching Time
+                        </h3>
+                        
+                        <div class="bot-templates">
+                            <div class="bot-card" data-bot-id="1">
+                                <div class="bot-card-header">
+                                    <div>
+                                        <h3>IEP Meeting Summary Bot</h3>
+                                        <p class="bot-category">Category: Student Support</p>
+                                    </div>
+                                    <div class="bot-time-saved">Saves ~2.5 hrs/week</div>
+                                </div>
+                            </div>
+
+                            <div class="bot-card" data-bot-id="2">
+                                <div class="bot-card-header">
+                                    <div>
+                                        <h3>Parent-Teacher Conference Recap</h3>
+                                        <p class="bot-category">Category: Communications</p>
+                                    </div>
+                                    <div class="bot-time-saved">Saves ~1.5 hrs/week</div>
+                                </div>
+                            </div>
+                            
+                            <div class="bot-card" data-bot-id="9">
+                                <div class="bot-card-header">
+                                    <div>
+                                        <h3>Differentiated Lesson Planner</h3>
+                                        <p class="bot-category">Category: Instruction</p>
+                                    </div>
+                                    <div class="bot-time-saved">Saves ~4 hrs/week</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Administrators Section -->
+                    <div class="role-section" style="margin-bottom: 2rem;">
+                        <h3 style="color: #7e22ce; font-size: 1.25rem; margin-bottom: 0.75rem; border-bottom: 2px solid #f3e8ff; padding-bottom: 0.5rem;">
+                            <i data-feather="briefcase" style="width: 1.25rem; height: 1.25rem; vertical-align: middle; margin-right: 0.5rem;"></i>
+                            For Administrators: Crisis Communication Command Center — Perfect Messaging When It Matters Most
+                        </h3>
+                        
+                        <div class="bot-templates">
+                            <div class="bot-card" data-bot-id="4">
+                                <div class="bot-card-header">
+                                    <div>
+                                        <h3>Board Brief FAQ Generator</h3>
+                                        <p class="bot-category">Category: Administration</p>
+                                    </div>
+                                    <div class="bot-time-saved">Saves ~2 hrs/week</div>
+                                </div>
+                            </div>
+                            
+                            <div class="bot-card" data-bot-id="7">
+                                <div class="bot-card-header">
+                                    <div>
+                                        <h3>Meeting Minutes Synthesizer</h3>
+                                        <p class="bot-category">Category: Administration</p>
+                                    </div>
+                                    <div class="bot-time-saved">Saves ~3 hrs/week</div>
+                                </div>
+                            </div>
+                            
+                            <div class="bot-card" data-bot-id="8">
+                                <div class="bot-card-header">
+                                    <div>
+                                        <h3>Budget Analysis Dashboard</h3>
+                                        <p class="bot-category">Category: Finance</p>
+                                    </div>
+                                    <div class="bot-time-saved">Saves ~5 hrs/week</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Support Staff Section -->
+                    <div class="role-section">
+                        <h3 style="color: var(--success); font-size: 1.25rem; margin-bottom: 0.75rem; border-bottom: 2px solid var(--success-light); padding-bottom: 0.5rem;">
+                            <i data-feather="users" style="width: 1.25rem; height: 1.25rem; vertical-align: middle; margin-right: 0.5rem;"></i>
+                            For Support Staff: Intervention Intelligence — Student Support Documentation Simplified
+                        </h3>
+                        
+                        <div class="bot-templates">
+                            <div class="bot-card" data-bot-id="3">
+                                <div class="bot-card-header">
+                                    <div>
+                                        <h3>Real-time Student Performance Alerts</h3>
+                                        <p class="bot-category">Category: Monitoring</p>
+                                    </div>
+                                    <div class="bot-time-saved">Saves ~3 hrs/week</div>
+                                </div>
+                            </div>
+                            
+                            <div class="bot-card" data-bot-id="5">
+                                <div class="bot-card-header">
+                                    <div>
+                                        <h3>Behavior Intervention Reports</h3>
+                                        <p class="bot-category">Category: Student Support</p>
+                                    </div>
+                                    <div class="bot-time-saved">Saves ~2.5 hrs/week</div>
+                                </div>
+                            </div>
+                            
+                            <div class="bot-card" data-bot-id="6">
+                                <div class="bot-card-header">
+                                    <div>
+                                        <h3>Attendance Management System</h3>
+                                        <p class="bot-category">Category: Administration</p>
+                                    </div>
+                                    <div class="bot-time-saved">Saves ~2 hrs/week</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-center" style="margin-top: 2rem;">
+                        <button class="btn-primary" id="tryBotBuilder">Try Bot Builder Now</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Resources Tab -->
+            <div id="resources" class="tab-content">
+                <div class="card">
+                    <h2 class="card-title">AI Prompt Engineering Resource Hub</h2>
+                    <p style="margin-bottom: 1rem; color: var(--gray-600);">Preview of the resources that will be available after training.</p>
+
+                    <div class="resource-grid">
+                        <div class="resource-card blue">
+                            <h3>Workflow Guide</h3>
+                            <p>The "Ask → Clarify → Deliver" model for effective prompting</p>
+                            <div class="resource-dropdown">
+                                <select class="form-select resource-select">
+                                    <option value="" disabled selected>Select an example...</option>
+                                    <option value="wf1">Example 1: Basic Workflow Structure</option>
+                                    <option value="wf2">Example 2: Question Refinement Process</option>
+                                    <option value="wf3">Example 3: Output Quality Assessment</option>
+                                </select>
+                                <div class="example-preview" style="display: none; margin-top: 0.75rem; padding: 0.75rem; background-color: rgba(255, 255, 255, 0.5); border-radius: 0.25rem;">
+                                    <p class="example-text" style="font-size: 0.9rem;">Select an example to preview workflow structure</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="resource-card blue">
+                            <h3>Domain Templates</h3>
+                            <p>Turnkey guidance across educational functions</p>
+                            <div class="resource-dropdown">
+                                <select class="form-select resource-select">
+                                    <option value="" disabled selected>Select an example...</option>
+                                    <option value="dt1">Example 1: Student Support Template</option>
+                                    <option value="dt2">Example 2: Administrative Workflow</option>
+                                    <option value="dt3">Example 3: Instructional Planning</option>
+                                </select>
+                                <div class="example-preview" style="display: none; margin-top: 0.75rem; padding: 0.75rem; background-color: rgba(255, 255, 255, 0.5); border-radius: 0.25rem;">
+                                    <p class="example-text" style="font-size: 0.9rem;">Select an example to preview domain template</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="resource-card blue">
+                            <h3>Examples Library</h3>
+                            <p>Ready-to-use prompt templates for education</p>
+                            <div class="resource-dropdown">
+                                <select class="form-select resource-select">
+                                    <option value="" disabled selected>Select an example...</option>
+                                    <option value="el1">Example 1: Communication Template</option>
+                                    <option value="el2">Example 2: Report Generation</option>
+                                    <option value="el3">Example 3: Data Analysis</option>
+                                </select>
+                                <div class="example-preview" style="display: none; margin-top: 0.75rem; padding: 0.75rem; background-color: rgba(255, 255, 255, 0.5); border-radius: 0.25rem;">
+                                    <p class="example-text" style="font-size: 0.9rem;">Select an example to preview prompt template</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2 class="card-title">Administrative Productivity Resource Hub</h2>
+                    <p style="margin-bottom: 1rem; color: var(--gray-600);">Preview of the resources that will be available after training.</p>
+
+                    <div class="resource-grid resource-grid-2">
+                        <div class="resource-card green">
+                            <h3>Compliance-First Interface</h3>
+                            <p>Privacy-aware "ask-before-act" design ensures alignment with student-data regulations</p>
+                            <div class="resource-dropdown">
+                                <select class="form-select resource-select">
+                                    <option value="" disabled selected>Select an example...</option>
+                                    <option value="cf1">Example 1: Data Protection Framework</option>
+                                    <option value="cf2">Example 2: Consent Management</option>
+                                    <option value="cf3">Example 3: Audit Trail Implementation</option>
+                                </select>
+                                <div class="example-preview" style="display: none; margin-top: 0.75rem; padding: 0.75rem; background-color: rgba(255, 255, 255, 0.5); border-radius: 0.25rem;">
+                                    <p class="example-text" style="font-size: 0.9rem;">Select an example to preview compliance framework</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="resource-card green">
+                            <h3>Prompt Template Kit</h3>
+                            <p>Session-based templates covering educational administrative tasks</p>
+                            <div class="resource-dropdown">
+                                <select class="form-select resource-select">
+                                    <option value="" disabled selected>Select an example...</option>
+                                    <option value="pt1">Example 1: Meeting Summary Template</option>
+                                    <option value="pt2">Example 2: Email Drafting Assistant</option>
+                                    <option value="pt3">Example 3: Schedule Optimization</option>
+                                </select>
+                                <div class="example-preview" style="display: none; margin-top: 0.75rem; padding: 0.75rem; background-color: rgba(255, 255, 255, 0.5); border-radius: 0.25rem;">
+                                    <p class="example-text" style="font-size: 0.9rem;">Select an example to preview prompt template</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Calendar Tab -->
+            <div id="calendar" class="tab-content">
+                <div class="card">
+                    <h2 class="card-title">Training Calendar & Milestones</h2>
+
+                    <div class="timeline">
+                        <div class="timeline-line"></div>
+
+                        <div class="timeline-item">
+                            <div class="timeline-dot">1</div>
+                            <h3 class="timeline-title">Foundations</h3>
+                            <p class="timeline-date">Month 1 (May)</p>
+                            <p>AI demystification session and practical framework demonstrating methods to streamline administrative workflows.</p>
+                            <div class="badges">
+                                <span class="badge badge-blue">60 minutes</span>
+                                <span class="badge badge-purple">Executive Leadership Team</span>
+                            </div>
+                        </div>
+
+                        <div class="timeline-item">
+                            <div class="timeline-dot">2</div>
+                            <h3 class="timeline-title">Workshop</h3>
+                            <p class="timeline-date">Month 2 (June)</p>
+                            <p>Interactive lab covering prompt engineering, data-analysis, content creation, and bot development.</p>
+                            <div class="badges">
+                                <span class="badge badge-blue">60-90 minutes</span>
+                                <span class="badge badge-purple">Principals & Cabinet</span>
+                            </div>
+                        </div>
+
+                        <div class="timeline-item">
+                            <div class="timeline-dot">3</div>
+                            <h3 class="timeline-title">Capstone</h3>
+                            <p class="timeline-date">Month 3 (July)</p>
+                            <p>District-wide rollout roadmap and scaling playbook with milestones and adoption metrics.</p>
+                            <div class="badges">
+                                <span class="badge badge-blue">As scheduled</span>
+                                <span class="badge badge-purple">All Cohorts</span>
+                            </div>
+                        </div>
+
+                        <div class="timeline-item">
+                            <div class="timeline-dot success">✓</div>
+                            <h3 class="timeline-title">30-Day Check-In</h3>
+                            <p class="timeline-date">30 days after Phase 3</p>
+                            <p>Assessment of implementation progress and additional coaching as needed.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <div class="footer">
+        <div class="container footer-container">
+            <p>This is a simulation of the AI Leadership Impact Dashboard</p>
+            <div>
+                <button class="btn-primary btn-success" id="demoBuilder">Try Bot Builder</button>
+                <button class="btn-primary" id="scheduleDemo">Schedule Demo</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bot Builder Modal -->
+    <div class="modal" id="botBuilderModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Build Your Custom AI Assistant</h2>
+                <button class="modal-close" id="closeModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="steps">
+                    <div class="step active" data-step="1">
+                        <div class="step-number">1</div>
+                        <div class="step-title">Select Use Case</div>
+                    </div>
+                    <div class="step" data-step="2">
+                        <div class="step-number">2</div>
+                        <div class="step-title">Configure Bot</div>
+                    </div>
+                    <div class="step" data-step="3">
+                        <div class="step-number">3</div>
+                        <div class="step-title">Test & Deploy</div>
+                    </div>
+                </div>
+
+                <div class="step-content active" data-step-content="1">
+                    <div class="form-group">
+                        <label class="form-label">Select a bot category:</label>
+                        <select class="form-select" id="botCategory">
+                            <option value="">Choose a category</option>
+                            <option value="student">Student Support</option>
+                            <option value="admin">Administration</option>
+                            <option value="comms">Communications</option>
+                            <option value="monitoring">Monitoring</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Select a bot template:</label>
+                        <select class="form-select" id="botTemplate" disabled>
+                            <option value="">Select a category first</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Or create a custom bot:</label>
+                        <input type="text" class="form-control" id="customBotName" placeholder="Enter a name for your custom bot">
+                    </div>
+                </div>
+
+                <div class="step-content" data-step-content="2">
+                    <div class="form-group">
+                        <label class="form-label">Bot Name:</label>
+                        <input type="text" class="form-control" id="finalBotName" readonly>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Data Sources:</label>
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" id="sourceStudentInfo">
+                            <label for="sourceStudentInfo">Student Information System</label>
+                        </div>
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" id="sourceCalendar">
+                            <label for="sourceCalendar">School Calendar</label>
+                        </div>
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" id="sourceCommunication">
+                            <label for="sourceCommunication">Communication Logs</label>
+                        </div>
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" id="sourceAssessment">
+                            <label for="sourceAssessment">Assessment Data</label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Instructions for your bot:</label>
+                        <textarea class="form-control" id="botInstructions" rows="4" placeholder="Enter specific instructions for your bot..."></textarea>
+                    </div>
+                </div>
+
+                <div class="step-content" data-step-content="3">
+                    <div class="form-group">
+                        <label class="form-label">Test your bot with a sample inquiry:</label>
+                        <input type="text" class="form-control" id="testInput" placeholder="Type a test message for your bot...">
+                        <button class="btn-primary" style="margin-top: 0.5rem;" id="sendTest">Test Bot</button>
+                    </div>
+
+                    <div class="preview-container">
+                        <div class="preview-header">
+                            <h3>Bot Response</h3>
+                        </div>
+                        <div class="preview-content" id="previewResponse">
+                            <p style="color: var(--gray-500); font-style: italic;">Bot response will appear here after testing...</p>
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="margin-top: 1.5rem;">
+                        <label class="form-label">Estimated time saved with this bot:</label>
+                        <input type="text" class="form-control" id="timeSavedEstimate" value="2.5 hours per week" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" id="prevStep" style="margin-right: auto; display: none;">Previous</button>
+                <button class="btn-primary" id="nextStep">Next</button>
+                <button class="btn-primary btn-success" id="deployBot" style="display: none;">Deploy Bot</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Schedule Demo Modal -->
+    <div class="modal" id="scheduleModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Schedule Your Demo</h2>
+                <button class="modal-close" id="closeScheduleModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p style="margin-bottom: 1rem;">Complete the form below to schedule a personalized demonstration of the AI Leadership Learning Series for SCUC ISD.</p>
+                
+                <div class="form-group">
+                    <label class="form-label">Your Name:</label>
+                    <input type="text" class="form-control" id="demoName" placeholder="Enter your name">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Email Address:</label>
+                    <input type="email" class="form-control" id="demoEmail" placeholder="Enter your email">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Preferred Date:</label>
+                    <input type="date" class="form-control" id="demoDate">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Specific Areas of Interest:</label>
+                    <textarea class="form-control" id="demoInterests" rows="3" placeholder="Tell us which aspects of the AI Leadership Learning Series you're most interested in..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-primary" id="submitDemo">Submit Request</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">Bot successfully deployed! You'll see it in your dashboard within 24 hours.</div>
+
+    <script>
+        // Initialize Feather Icons
+        document.addEventListener('DOMContentLoaded', () => {
+            feather.replace();
+            initCharts();
+            setupEventListeners();
+            setupResourceDropdowns();
+        });
+
+        // Navigation Tabs
+        function setupEventListeners() {
+            // Tab Navigation
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    
+                    document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+                    document.getElementById(btn.dataset.tab).classList.add('active');
+                });
+            });
+
+            // Time Scale Buttons
+            document.querySelectorAll('.time-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    updateSavings(btn.dataset.time);
+                });
+            });
+
+            // Bot Builder Button
+            document.getElementById('tryBotBuilder').addEventListener('click', () => {
+                document.getElementById('botBuilderModal').classList.add('active');
+            });
+
+            // Footer Bot Builder Button
+            document.getElementById('demoBuilder').addEventListener('click', () => {
+                document.getElementById('botBuilderModal').classList.add('active');
+            });
+
+            // Schedule Demo Button
+            document.getElementById('scheduleDemo').addEventListener('click', () => {
+                document.getElementById('scheduleModal').classList.add('active');
+            });
+
+            // Close Modals
+            document.getElementById('closeModal').addEventListener('click', () => {
+                document.getElementById('botBuilderModal').classList.remove('active');
+            });
+
+            document.getElementById('closeScheduleModal').addEventListener('click', () => {
+                document.getElementById('scheduleModal').classList.remove('active');
+            });
+
+            // Next Step Button
+            document.getElementById('nextStep').addEventListener('click', () => {
+                const currentStep = document.querySelector('.step.active').dataset.step;
+                const nextStep = parseInt(currentStep) + 1;
+                
+                if (nextStep <= 3) {
+                    updateStep(nextStep);
+                }
+            });
+
+            // Previous Step Button
+            document.getElementById('prevStep').addEventListener('click', () => {
+                const currentStep = document.querySelector('.step.active').dataset.step;
+                const prevStep = parseInt(currentStep) - 1;
+                
+                if (prevStep >= 1) {
+                    updateStep(prevStep);
+                }
+            });
+
+            // Bot Category Select
+            document.getElementById('botCategory').addEventListener('change', () => {
+                const category = document.getElementById('botCategory').value;
+                const templateSelect = document.getElementById('botTemplate');
+                
+                if (category) {
+                    templateSelect.disabled = false;
+                    templateSelect.innerHTML = '';
+                    
+                    const templates = getBotTemplatesByCategory(category);
+                    templates.forEach(template => {
+                        const option = document.createElement('option');
+                        option.value = template.id;
+                        option.textContent = template.name;
+                        templateSelect.appendChild(option);
+                    });
+                    
+                    const defaultOption = document.createElement('option');
+                    defaultOption.value = '';
+                    defaultOption.textContent = 'Select a template';
+                    templateSelect.insertBefore(defaultOption, templateSelect.firstChild);
+                    templateSelect.value = '';
+                } else {
+                    templateSelect.disabled = true;
+                    templateSelect.innerHTML = '<option value="">Select a category first</option>';
+                }
+            });
+
+            // Bot Templates
+            document.querySelectorAll('.bot-card').forEach(card => {
+                card.addEventListener('click', () => {
+                    document.getElementById('botBuilderModal').classList.add('active');
+                    const botId = card.dataset.botId;
+                    const bot = getBotById(botId);
+
+                    if (bot) {
+                        // Set category
+                        document.getElementById('botCategory').value = getCategoryValueFromName(bot.category);
+                        document.getElementById('botCategory').dispatchEvent(new Event('change'));
+                        
+                        // Set template
+                        setTimeout(() => {
+                            document.getElementById('botTemplate').value = botId;
+                            document.getElementById('customBotName').value = '';
+                        }, 100);
+                    }
+                });
+            });
+
+            // Test Bot Button
+            document.getElementById('sendTest').addEventListener('click', () => {
+                const input = document.getElementById('testInput').value;
+                if (input.trim() === '') return;
+                
+                const responseContainer = document.getElementById('previewResponse');
+                responseContainer.innerHTML = '<div class="loading"></div>';
+                
+                setTimeout(() => {
+                    const response = generateBotResponse(input);
+                    responseContainer.innerHTML = `<p class="typing-animation">${response}</p>`;
+                }, 1500);
+            });
+
+            // Deploy Bot Button
+            document.getElementById('deployBot').addEventListener('click', () => {
+                document.getElementById('botBuilderModal').classList.remove('active');
+                
+                const toast = document.getElementById('toast');
+                toast.classList.add('active');
+                
+                setTimeout(() => {
+                    toast.classList.remove('active');
+                }, 3000);
+            });
+
+            // Schedule Demo Submit Button
+            document.getElementById('submitDemo').addEventListener('click', () => {
+                const name = document.getElementById('demoName').value;
+                const email = document.getElementById('demoEmail').value;
+                const date = document.getElementById('demoDate').value;
+                
+                if (name && email && date) {
+                    document.getElementById('scheduleModal').classList.remove('active');
+                    
+                    const toast = document.getElementById('toast');
+                    toast.textContent = 'Demo request submitted! We will contact you shortly to confirm.';
+                    toast.classList.add('active');
+                    
+                    setTimeout(() => {
+                        toast.classList.remove('active');
+                    }, 3000);
+                }
+            });
+        }
+
+        // Initialize Charts
+        function initCharts() {
+            // Time Savings Chart
+            const timeCtx = document.getElementById('timeChart').getContext('2d');
+            const timeChart = new Chart(timeCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Admin Tasks', 'Reporting', 'Communications', 'Meeting Prep', 'Follow-ups'],
+                    datasets: [
+                        {
+                            label: 'Current Hours',
+                            data: [15, 8, 12, 6, 9],
+                            backgroundColor: '#8884d8',
+                        },
+                        {
+                            label: 'Hours with AI Assistance',
+                            data: [5, 3, 5, 2, 3],
+                            backgroundColor: '#82ca9d',
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Hours'
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Adoption Chart
+            const adoptionCtx = document.getElementById('adoptionChart').getContext('2d');
+            const adoptionChart = new Chart(adoptionCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Early Adopters', 'Month 1', 'Month 2', 'Month 3'],
+                    datasets: [{
+                        data: [25, 35, 20, 20],
+                        backgroundColor: ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'],
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: (context) => {
+                                    return `${context.label}: ${context.raw}%`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Update Savings Display
+        function updateSavings(timeScale) {
+            const timeDisplay = document.getElementById('timeSaved');
+            const moneyDisplay = document.getElementById('moneySaved');
+            
+            const weeklySavings = 45; // hours
+            const hourlyCost = 50; // dollars
+            
+            let hours, money;
+            
+            switch(timeScale) {
+                case 'weekly':
+                    hours = weeklySavings;
+                    money = hours * hourlyCost;
+                    timeDisplay.textContent = `${hours} hours/week`;
+                    break;
+                case 'monthly':
+                    hours = weeklySavings * 4;
+                    money = hours * hourlyCost;
+                    timeDisplay.textContent = `${hours} hours/month`;
+                    break;
+                case 'yearly':
+                    hours = weeklySavings * 52;
+                    money = hours * hourlyCost;
+                    timeDisplay.textContent = `${hours} hours/year`;
+                    break;
+            }
+            
+            moneyDisplay.textContent = `$${money.toLocaleString()}`;
+        }
+
+        // Update Bot Builder Step
+        function updateStep(step) {
+            // Update Step Indicators
+            document.querySelectorAll('.step').forEach(s => {
+                s.classList.remove('active');
+            });
+            document.querySelector(`.step[data-step="${step}"]`).classList.add('active');
+            
+            // Update Step Content
+            document.querySelectorAll('.step-content').forEach(c => {
+                c.classList.remove('active');
+            });
+            document.querySelector(`.step-content[data-step-content="${step}"]`).classList.add('active');
+            
+            // Update Navigation Buttons
+            const prevBtn = document.getElementById('prevStep');
+            const nextBtn = document.getElementById('nextStep');
+            const deployBtn = document.getElementById('deployBot');
+            
+            if (step === 1) {
+                prevBtn.style.display = 'none';
+                nextBtn.style.display = 'block';
+                deployBtn.style.display = 'none';
+            } else if (step === 3) {
+                prevBtn.style.display = 'block';
+                nextBtn.style.display = 'none';
+                deployBtn.style.display = 'block';
+            } else {
+                prevBtn.style.display = 'block';
+                nextBtn.style.display = 'block';
+                deployBtn.style.display = 'none';
+            }
+            
+            // Process Step-specific Logic
+            if (step === 2) {
+                let botName = '';
+                const templateValue = document.getElementById('botTemplate').value;
+                const customName = document.getElementById('customBotName').value;
+                
+                if (templateValue) {
+                    const bot = getBotById(templateValue);
+                    if (bot) {
+                        botName = bot.name;
+                    }
+                } else if (customName) {
+                    botName = customName;
+                }
+                
+                document.getElementById('finalBotName').value = botName;
+            }
+        }
+
+        // Get Bot Templates by Category
+        function getBotTemplatesByCategory(category) {
+            const templates = [
+                { id: '1', name: 'IEP Meeting Summary Bot', category: 'student' },
+                { id: '2', name: 'Parent-Teacher Conference Recap', category: 'comms' },
+                { id: '3', name: 'Real-time Student Performance Alerts', category: 'monitoring' },
+                { id: '4', name: 'Board Brief FAQ Generator', category: 'admin' },
+                { id: '5', name: 'Behavior Intervention Reports', category: 'student' },
+                { id: '6', name: 'Staff Meeting Summary Bot', category: 'admin' },
+                { id: '7', name: 'Attendance Monitoring Bot', category: 'monitoring' },
+                { id: '8', name: 'Parent Communication Template Bot', category: 'comms' },
+            ];
+            
+            return templates.filter(t => t.category === category);
+        }
+
+        // Get Bot by ID
+        function getBotById(id) {
+            const allBots = [
+                { id: '1', name: 'IEP Meeting Summary Bot', category: 'Student Support' },
+                { id: '2', name: 'Parent-Teacher Conference Recap', category: 'Communications' },
+                { id: '3', name: 'Real-time Student Performance Alerts', category: 'Monitoring' },
+                { id: '4', name: 'Board Brief FAQ Generator', category: 'Administration' },
+                { id: '5', name: 'Behavior Intervention Reports', category: 'Student Support' },
+            ];
+            
+            return allBots.find(b => b.id === id);
+        }
+
+        // Convert Category Name to Value
+        function getCategoryValueFromName(name) {
+            const map = {
+                'Student Support': 'student',
+                'Administration': 'admin',
+                'Communications': 'comms',
+                'Monitoring': 'monitoring'
+            };
+            
+            return map[name] || '';
+        }
+
+        // Generate Bot Response (Simulation)
+        function generateBotResponse(input) {
+            const responses = {
+                'iep': "Here's the IEP meeting summary: Student showed progress in reading fluency (increased from 85 to 95 WPM) and comprehension. Math skills improved with geometry concepts but still struggles with word problems. Agreed to increase small group instruction for math word problems and continue current reading interventions. Next review scheduled in 6 weeks.",
+                'conference': "Parent-Teacher Conference Summary: Student is showing strong progress in science and social studies. Reading comprehension is at grade level. Parents expressed concern about math performance and homework completion. Agreed to implement daily homework checklist and weekly progress updates. Follow-up scheduled for October 15.",
+                'alert': "ALERT: 5 students in Ms. Johnson's 3rd period class scored below 70% on today's assessment. Recommended intervention: Small group review session during tomorrow's advisory period. Would you like me to draft a notification to the students?",
+                'board': "Based on analysis of previous board meetings, here are the 3 most likely questions about the technology budget: 1) How does AI integration affect staffing needs? 2) What's the expected ROI timeline? 3) How will we measure adoption success? Suggested responses have been drafted and saved to your drive.",
+                'behavior': "Behavior Intervention Report: Student has shown 60% reduction in classroom disruptions since implementing the check-in/check-out system. Positive reinforcement strategy is working well. Areas for improvement: transition times between activities. Recommendation: Continue current plan with added visual timer for transitions."
+            };
+            
+            const lowercaseInput = input.toLowerCase();
+            
+            if (lowercaseInput.includes('iep') || lowercaseInput.includes('meeting summary')) {
+                return responses.iep;
+            } else if (lowercaseInput.includes('conference') || lowercaseInput.includes('parent')) {
+                return responses.conference;
+            } else if (lowercaseInput.includes('alert') || lowercaseInput.includes('performance')) {
+                return responses.alert;
+            } else if (lowercaseInput.includes('board') || lowercaseInput.includes('faq')) {
+                return responses.board;
+            } else if (lowercaseInput.includes('behavior') || lowercaseInput.includes('intervention')) {
+                return responses.behavior;
+            } else {
+                return "I've analyzed your request and can help with that. Would you like me to generate a detailed report, create a summary, or provide specific data points? I can format the output based on your preferences and integrate with your existing systems.";
+            }
+        }
+        
+        // Handle Resource Dropdowns
+        function setupResourceDropdowns() {
+            document.querySelectorAll('.resource-select').forEach(select => {
+                select.addEventListener('change', function() {
+                    const previewDiv = this.parentElement.querySelector('.example-preview');
+                    const previewText = previewDiv.querySelector('.example-text');
+                    
+                    if (this.value) {
+                        previewDiv.style.display = 'block';
+                        
+                        // Display placeholder text based on selection
+                        switch(this.value) {
+                            // Workflow Guide examples
+                            case 'wf1':
+                                previewText.textContent = '[Placeholder] Basic workflow structure with sequential steps';
+                                break;
+                            case 'wf2':
+                                previewText.textContent = '[Placeholder] Question refinement process flowchart';
+                                break;
+                            case 'wf3':
+                                previewText.textContent = '[Placeholder] Output quality assessment checklist';
+                                break;
+                                
+                            // Domain Templates examples
+                            case 'dt1':
+                                previewText.textContent = '[Placeholder] Student support template structure';
+                                break;
+                            case 'dt2':
+                                previewText.textContent = '[Placeholder] Administrative workflow template';
+                                break;
+                            case 'dt3':
+                                previewText.textContent = '[Placeholder] Instructional planning framework';
+                                break;
+                                
+                            // Examples Library examples
+                            case 'el1':
+                                previewText.textContent = '[Placeholder] Communication template structure';
+                                break;
+                            case 'el2':
+                                previewText.textContent = '[Placeholder] Report generation template';
+                                break;
+                            case 'el3':
+                                previewText.textContent = '[Placeholder] Data analysis prompt structure';
+                                break;
+                                
+                            // Compliance-First examples
+                            case 'cf1':
+                                previewText.textContent = '[Placeholder] Data protection framework components';
+                                break;
+                            case 'cf2':
+                                previewText.textContent = '[Placeholder] Consent management process';
+                                break;
+                            case 'cf3':
+                                previewText.textContent = '[Placeholder] Audit trail implementation outline';
+                                break;
+                                
+                            // Prompt Template examples
+                            case 'pt1':
+                                previewText.textContent = '[Placeholder] Meeting summary template structure';
+                                break;
+                            case 'pt2':
+                                previewText.textContent = '[Placeholder] Email drafting assistant framework';
+                                break;
+                            case 'pt3':
+                                previewText.textContent = '[Placeholder] Schedule optimization approach';
+                                break;
+                        }
+                    } else {
+                        previewDiv.style.display = 'none';
+                    }
+                });
+            });
+        }
+    </script>
+</body>
+</html>
